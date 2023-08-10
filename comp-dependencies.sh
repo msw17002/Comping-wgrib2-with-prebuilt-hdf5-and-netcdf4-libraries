@@ -204,14 +204,3 @@ echo 'Edit the following in $HOME/grib2/makefile'
 echo '$USE_NETCDF4: $DIR/include:$DIR/lib'
 echo '$USE_HDF5: $DIR/include:$DIR/lib'
 exit
-
-/home/walters.michael@corp.weatherconsultants.com/tools/apps/Library
-#export LD_LIBRARY_PATH=$DIR/lib:$LD_LIBRARY_PATH
-#export PATH="/shared/stormcenter/AirMG/running_simulations/MIKE/tools/example/grib2/wgrib2:$PATH"
-
-#wgrib2 -var hrrr.grib2
-#wgrib2 hrrr.grib2 -s | egrep ':TMP:2 m|UGRD:10 m|VGRD:10 m' | wgrib2 -i hrrr.grib2 -grib subset.grib2
-#wgrib2 subset.grib2 -s -lon -71.0589 42.3601
-#wgrib2 subset.grib2 -small_grib -80:-60 35:45 subset-domain.grib2
-
-
