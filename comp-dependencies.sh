@@ -99,9 +99,9 @@ fi
 if [ -f "wgrib2.tgz.v3.1.2" ]; then 
     echo ""
 else
-    echo 'wget -q wget https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz.v3.1.2'
+    echo 'wget -q https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz.v3.1.2'
     sleep $DT
-    wget -q wget https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz.v3.1.2
+    wget -q https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz.v3.1.2
     echo 'tar -xzf wgrib2.tgz.v3.1.2'
     tar -xzf wgrib2.tgz.v3.1.2
 fi
