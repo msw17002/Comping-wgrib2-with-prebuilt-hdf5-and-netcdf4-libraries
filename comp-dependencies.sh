@@ -201,6 +201,6 @@ make install
 export USE_NETCDF4=$DIR/include:$DIR/lib
 export USE_HDF5=$DIR/include:$DIR/lib
 echo 'Edit the following in $HOME/grib2/makefile'
-echo '$USE_NETCDF4: $DIR/include:$DIR/lib'
-echo '$USE_HDF5: $DIR/include:$DIR/lib'
+echo '$USE_NETCDF4: '"$DIR/include:$DIR/lib"
+echo '$USE_HDF5: '"$DIR/include:$DIR/lib"
 exit
