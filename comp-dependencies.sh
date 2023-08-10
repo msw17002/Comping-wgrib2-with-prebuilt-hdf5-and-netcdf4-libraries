@@ -1,0 +1,217 @@
+#!/bin/bash
+
+#===Parameters
+echo "==============================================================================="
+echo "=======================EXPORTING PARAMETERS===================================="
+echo 'export HOME=$(pwd)'
+echo 'export DIR=${HOME}/apps/Library'
+echo "export CC=gcc"
+echo "export CXX=g++"
+echo "export FC=gfortran"
+echo "export F77=gfortran"
+echo 'export apps=${HOME}/apps'
+echo "export ZLIB=zlib-1.2.13"
+echo "export HDF5=hdf5-1.12.2"
+echo "export NTCC=netcdf-c-4.9.0"
+echo "export NTCF=netcdf-fortran-4.6.0"
+echo "==============================================================================="
+sleep 5
+export HOME=$(pwd)
+export DIR=${HOME}/apps/Library
+export CC=gcc
+export CXX=g++
+export FC=gfortran
+export F77=gfortran
+export apps=${HOME}/apps
+export ZLIB=zlib-1.2.13
+export HDF5=hdf5-1.12.2
+export NTCC=netcdf-c-4.9.0
+export NTCF=netcdf-fortran-4.6.0
+export DT=5
+
+echo "==============================================================================="
+echo "===================CREATING DIRECTORY STRUCTURE================================"
+sleep 5
+#===Set directory structure
+#-  apps directory
+if [ -d "$HOME/apps" ]; then 
+   echo "$HOME/apps already exists!"
+else
+   echo 'mkdir $HOME/apps'
+   sleep $DT 
+   mkdir $HOME/apps
+fi 
+#-  Downloads directory
+if [ -d "$HOME/apps/Downloads" ]; then
+   echo "$HOME/apps/Downloads already exists!"
+else
+   echo 'mkdir $HOME/apps/Downloads'
+   sleep $DT
+   mkdir $HOME/apps/Downloads
+fi
+#-  Library directory
+if [ -d "$HOME/apps/Library" ]; then
+   echo "$HOME/apps/Library already exists!"
+else
+   echo 'mkdir $HOME/apps/Library'
+   sleep $DT
+   mkdir $HOME/apps/Library
+fi
+echo "==============================================================================="
+
+echo "==============================================================================="
+echo "===================DOWNLOADING SOURCE BINARIES ================================"
+sleep 5
+#===conditionally download dependancies
+#-  zlib source code
+if [ -f "$HOME/apps/Downloads/$ZLIB.tar.gz" ]; then
+    echo "$HOME/apps/Downloads/$ZLIB.tar.gz already exists!"
+else
+    echo 'wget -q 'https://github.com/madler/zlib/releases/download/v1.2.13/zlib-1.2.13.tar.gz' -O $HOME/apps/Downloads/$ZLIB.tar.gz'
+    sleep $DT
+    wget -q 'https://github.com/madler/zlib/releases/download/v1.2.13/zlib-1.2.13.tar.gz' -O $HOME/apps/Downloads/$ZLIB.tar.gz
+fi
+#-  HDF5 source code
+if [ -f "$HOME/apps/Downloads/$HDF5.tar.gz" ]; then
+    echo "$HOME/apps/Downloads/$HDF5.tar.gz already exists!"
+else
+    echo "wget -q 'https://www.hdfgroup.org/package/hdf5-1-12-2-tar-gz/?wpdmdl=16474&amp;refresh=64d28450662021691518032' -O "'$HOME/apps/Downloads/$HDF5.tar.gz'
+    sleep $DT
+    wget -q 'https://www.hdfgroup.org/package/hdf5-1-12-2-tar-gz/?wpdmdl=16474&amp;refresh=64d28450662021691518032' -O $HOME/apps/Downloads/$HDF5.tar.gz
+fi
+#-  netcdf4-C source code
+if [ -f "$HOME/apps/Downloads/$NTCC.tar.gz" ]; then
+    echo "$HOME/apps/Downloads/$NTCC.tar.gz already exists!"
+else
+    echo 'wget -q 'https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.9.0.tar.gz' -O $HOME/apps/Downloads/$NTCC.tar.gz'
+    sleep $DT
+    wget -q 'https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.9.0.tar.gz' -O $HOME/apps/Downloads/$NTCC.tar.gz
+fi
+#-  netcdf4-gfortran source code
+if [ -f "$HOME/apps/Downloads/$NTCF.tar.gz" ]; then
+    echo "$HOME/apps/Downloads/$NTCF.tar.gz already exists!"
+else
+    echo 'wget -q 'https://downloads.unidata.ucar.edu/netcdf-fortran/4.6.0/netcdf-fortran-4.6.0.tar.gz' -O $HOME/apps/Downloads/$NTCF.tar.gz'
+    sleep $DT
+    wget -q 'https://downloads.unidata.ucar.edu/netcdf-fortran/4.6.0/netcdf-fortran-4.6.0.tar.gz' -O $HOME/apps/Downloads/$NTCF.tar.gz
+fi
+#-  wgrib2 source code
+if [ -f "wgrib2.tgz.v3.1.2" ]; then 
+    echo ""
+else
+    echo 'wget -q wget https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz.v3.1.2'
+    sleep $DT
+    wget -q wget https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz.v3.1.2
+    echo 'tar -xzf wgrib2.tgz.v3.1.2'
+    tar -xzf wgrib2.tgz.v3.1.2
+fi
+echo "==============================================================================="
+
+echo "==============================================================================="
+echo "==========================COMPILING ZLIB======================================="
+echo 'cd $HOME/apps/Downloads'
+echo 'tar -xvzf ${ZLIB}.tar.gz'
+echo 'cd ${ZLIB}/'
+echo './configure --prefix=$DIR'
+echo "make"
+echo "make install"
+echo "==============================================================================="
+sleep 5
+#===compile zlib
+cd $HOME/apps/Downloads
+tar -xzf ${ZLIB}.tar.gz
+cd ${ZLIB}/
+./configure --prefix=$DIR
+make
+make install
+echo "==============================================================================="
+echo "==========================COMPILING HDF5======================================="
+echo 'cd $HOME/apps/Downloads'
+echo 'tar -xvzf ${HDF5}.tar.gz'
+echo 'cd ${HDF5}'
+echo './configure --prefix=$DIR --with-zlib=$DIR --enable-hl --enable-fortran'
+echo "make"
+echo "make install"
+echo "==============================================================================="
+sleep 5
+#===compile hdf5 library for netcdf4 functionality
+cd $HOME/apps/Downloads
+tar -xzf ${HDF5}.tar.gz
+cd ${HDF5}
+./configure --prefix=$DIR --with-zlib=$DIR --enable-hl --enable-fortran
+make
+make install
+export HDF5=$DIR
+export LD_LIBRARY_PATH=$DIR/lib:$LD_LIBRARY_PATH
+echo "==============================================================================="
+echo "========================COMPILING NETCDF4-C===================================="
+echo 'export HDF5=$DIR'
+echo 'export LD_LIBRARY_PATH=$DIR/lib:$LD_LIBRARY_PATH'
+echo 'cd $HOME/apps/Downloads'
+echo 'tar -xvzf ${NTCC}.tar.gz'
+echo 'cd ${NTCC}/'
+echo 'export CPPFLAGS=-I$DIR/include'
+echo 'export LDFLAGS=-L$DIR/lib'
+echo './configure --prefix=$DIR --disable-dap'
+echo "make"
+echo "make install"
+echo "==============================================================================="
+sleep 5
+#===compile netcdf4-C library
+cd $HOME/apps/Downloads
+tar -xzf ${NTCC}.tar.gz
+cd ${NTCC}/
+export CPPFLAGS=-I$DIR/include 
+export LDFLAGS=-L$DIR/lib
+./configure --prefix=$DIR --disable-dap
+make
+make install
+export PATH=$DIR/bin:$PATH
+export NETCDF=$DIR
+echo "==============================================================================="
+echo "========================COMPILING NETCDF4-fortran=============================="
+echo 'export PATH=$DIR/bin:$PATH'
+echo 'export NETCDF=$DIR'
+echo 'cd $HOME/apps/Downloads'
+echo 'tar -xvzf ${NTCF}.tar.gz'
+echo 'cd ${NTCF}/'
+echo 'export LD_LIBRARY_PATH=$DIR/lib:$LD_LIBRARY_PATH'
+echo 'export CPPFLAGS=-I$DIR/include'
+echo 'export LDFLAGS=-L$DIR/lib'
+echo 'export LIBS="-lnetcdf -lhdf5_hl -lhdf5 -lz"'
+echo './configure --prefix=$DIR --disable-shared'
+echo "make check"
+echo "make"
+echo "make install"
+echo "==============================================================================="
+sleep 5
+#===compile netcdf4-gfortran library
+cd $HOME/apps/Downloads
+tar -xzf ${NTCF}.tar.gz
+cd ${NTCF}/
+export LD_LIBRARY_PATH=$DIR/lib:$LD_LIBRARY_PATH
+export CPPFLAGS=-I$DIR/include 
+export LDFLAGS=-L$DIR/lib
+export LIBS="-lnetcdf -lhdf5_hl -lhdf5 -lz" 
+./configure --prefix=$DIR --disable-shared
+make check
+make
+make install
+#===for wgrb2 makefile
+export USE_NETCDF4=$DIR/include:$DIR/lib
+export USE_HDF5=$DIR/include:$DIR/lib
+echo 'Edit the following in $HOME/grib2/makefile'
+echo '$USE_NETCDF4: $DIR/include:$DIR/lib'
+echo '$USE_HDF5: $DIR/include:$DIR/lib'
+exit
+
+/home/walters.michael@corp.weatherconsultants.com/tools/apps/Library
+#export LD_LIBRARY_PATH=$DIR/lib:$LD_LIBRARY_PATH
+#export PATH="/shared/stormcenter/AirMG/running_simulations/MIKE/tools/example/grib2/wgrib2:$PATH"
+
+#wgrib2 -var hrrr.grib2
+#wgrib2 hrrr.grib2 -s | egrep ':TMP:2 m|UGRD:10 m|VGRD:10 m' | wgrib2 -i hrrr.grib2 -grib subset.grib2
+#wgrib2 subset.grib2 -s -lon -71.0589 42.3601
+#wgrib2 subset.grib2 -small_grib -80:-60 35:45 subset-domain.grib2
+
+
